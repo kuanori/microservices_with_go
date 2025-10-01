@@ -82,11 +82,11 @@ func main() {
 	}
 
 	if err := processTruck(&nt); err != nil {
-		log.Fatalf("Error processing truck: %s", err)
+		log.Fatalf("error processing truck: %s", err)
 	}
 
 	if err := processTruck(&et); err != nil {
-		log.Fatalf("Error processing truck: %s", err)
+		log.Fatalf("error processing truck: %s", err)
 	}
 
 	log.Println(nt)
