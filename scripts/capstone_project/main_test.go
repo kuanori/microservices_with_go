@@ -59,8 +59,8 @@ func TestUpdateTruckCargo(t *testing.T) {
 	}
 }
 
-/*
-FIXME: Uncomment me for the concurrency part
+// keep in mind that maps are not safe for concurrency R & W
+// We solve it by using Mutexes
 func TestConcurrentUpdate(t *testing.T) {
 	manager := NewTruckManager()
 	manager.AddTruck("1", 100)
@@ -80,4 +80,4 @@ func TestConcurrentUpdate(t *testing.T) {
 	for i := 0; i < numGoroutines; i++ {
 		<-done
 	}
-} */
+}
