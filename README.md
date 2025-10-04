@@ -8,6 +8,11 @@
 go test -v *.go
 ```
 
+
+```bash
+minikube dashboard
+```
+
 ```bash
 tilt up
 ```
