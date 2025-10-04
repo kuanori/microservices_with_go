@@ -16,3 +16,25 @@ minikube dashboard
 ```bash
 tilt up
 ```
+
+```bash
+go run tools/create_service.go -name test
+```
+```
+Directory structure created:
+
+services/test-service/
+├── cmd/                    # Application entry points
+├── internal/              # Private application code
+│   ├── domain/           # Business domain models and interfaces
+│   │   └── test.go         # Core domain interfaces
+│   ├── service/          # Business logic implementation
+│   │   └── service.go    # Service implementations
+│   └── infrastructure/   # External dependencies implementations (abstractions)
+│       ├── events/       # Event handling (RabbitMQ)
+│       ├── grpc/         # gRPC server handlers
+│       └── repository/   # Data persistence
+├── pkg/                  # Public packages
+│   └── types/           # Shared types and models
+└── README.md            # This file
+```
