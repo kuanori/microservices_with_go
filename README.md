@@ -7,3 +7,7 @@
 ```bash
 go test -v *.go
 ```
+
+```bash
+tilt up
+```
