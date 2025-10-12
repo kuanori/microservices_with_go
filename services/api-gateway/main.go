@@ -1,8 +1,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"microservices_with_go/shared/env"
 )
@@ -23,8 +28,29 @@ func main() {
 		Handler: mux,
 	}
 
-	if err := server.ListenAndServe(); err != nil {
-		log.Printf("HTTP server error: %v", err)
-	}
+	serverErrors := make(chan error, 1)
 
+	go func() {
+		log.Printf("Server listetning on %s", httpAddr)
+		serverErrors <- server.ListenAndServe()
+	}()
+
+	shutDown := make(chan os.Signal, 1)
+	signal.Notify(shutDown, os.Interrupt, syscall.SIGTERM)
+
+	select {
+	case err := <-serverErrors:
+		log.Printf("Error starting the server: %v", err)
+	case sig := <-shutDown:
+		log.Printf("Error starting the server: %v", sig)
+
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		if err := server.Shutdown(ctx); err != nil {
+			log.Printf("Could not stop server gracefully: %v", err)
+			server.Close()
+		}
+
+	}
 }
