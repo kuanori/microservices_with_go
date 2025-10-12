@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"microservices_with_go/services/trip-service/internal/domain"
+	"microservices_with_go/shared/types"
 	"net/http"
 )
 
@@ -11,8 +12,18 @@ type HttpHandler struct {
 	Service domain.TripService
 }
 
-func (s *HttpHandler) HandleTripPreview(w http.ResponseWriter, r *http.Request) {
+type previewTripRequest struct {
+	UserID      string           `json:"userID"`
+	Pickup      types.Coordinate `json:"pickup"`
+	Destination types.Coordinate `json:"destination"`
+}
 
+func (s *HttpHandler) HandleTripPreview(w http.ResponseWriter, r *http.Request) {
+	var reqBody previewTripRequest
+	if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
+		http.Error(w, "falied to parse JSON data", http.StatusBadRequest)
+		return
+	}
 	ctx := r.Context()
 
 	fare := &domain.RideFareModel{
