@@ -1,35 +1,34 @@
 package main
 
 import (
-	"context"
 	"log"
-	"microservices_with_go/services/trip-service/internal/domain"
+	h "microservices_with_go/services/trip-service/internal/infrastructure/http"
 	"microservices_with_go/services/trip-service/internal/infrastructure/repository"
 	"microservices_with_go/services/trip-service/internal/service"
-	"time"
+	"microservices_with_go/shared/env"
+	"net/http"
+)
+
+var (
+	httpAddr = env.GetString("TRIP_HTTP_ADDR", ":8083")
 )
 
 func main() {
+	log.Println("Trip Service started")
 
-	ctx := context.Background()
-
+	mux := http.NewServeMux()
 	inmemRepo := repository.NewInmemRepository()
-
 	svc := service.NewService(inmemRepo)
+	httpHandler := h.HttpHandler{Service: svc}
 
-	fare := &domain.RideFareModel{
-		UserID: "42",
+	mux.HandleFunc("POST /preview", httpHandler.HandleTripPreview)
+
+	server := &http.Server{
+		Addr:    httpAddr,
+		Handler: mux,
 	}
 
-	t, err := svc.CreateTrip(ctx, fare)
-	if err != nil {
-		log.Println(err)
-	}
-
-	log.Println(t)
-
-	// keep the program running for now
-	for {
-		time.Sleep(time.Second)
+	if err := server.ListenAndServe(); err != nil {
+		log.Printf("HTTP server error: %v", err)
 	}
 }
