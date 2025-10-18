@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"microservices_with_go/services/trip-service/internal/domain"
 )
 
@@ -26,4 +27,13 @@ func (r *inmemRepository) SaveRideFare(ctx context.Context, f *domain.RideFareMo
 	r.rideFare[f.ID.Hex()] = f
 
 	return nil
+}
+
+func (r *inmemRepository) GetRideFareByID(ctx context.Context, id string) (*domain.RideFareModel, error) {
+	fare, exist := r.rideFare[id]
+	if !exist {
+		return nil, fmt.Errorf("fare does not exits with ID: %v", id)
+	}
+
+	return fare, nil
 }

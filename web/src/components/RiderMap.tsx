@@ -112,11 +112,11 @@ export default function RiderMap({ onRouteSelected }: RiderMapProps) {
 
     const handleStartTrip = async (fare: RouteFare) => {
         const payload = {
-            rideFareID: fare.id,
+            rideFareID: fare.ID,
             userID: userID,
         } as HTTPTripStartRequestPayload
 
-        if (!fare.id) {
+        if (!fare.ID) {
             alert("No Fare ID in the payload")
             return
         }

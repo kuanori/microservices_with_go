@@ -34,7 +34,7 @@ export enum CarPackageSlug {
 }
 
 export interface RouteFare {
-    id: string,
+    ID: string,
     packageSlug: CarPackageSlug,
     basePrice: number,
     totalPriceInCents?: number,
