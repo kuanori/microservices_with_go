@@ -22,8 +22,8 @@ func (o *OsrmApiResponse) ToProto() *pb.Route {
 
 	for i, coord := range geometry {
 		coordinates[i] = &pb.Coordinate{
-			Latitude:   coord[0],
-			Longtitude: coord[1],
+			Latitude:  coord[0],
+			Longitude: coord[1],
 		}
 	}
 
@@ -33,7 +33,19 @@ func (o *OsrmApiResponse) ToProto() *pb.Route {
 				Coordinates: coordinates,
 			},
 		},
-		Distance: route.Distance,
 		Duration: route.Duration,
+		Distance: route.Distance,
+	}
+}
+
+type PricingConfig struct {
+	PricePerUnitOfDistance float64
+	PricingPerMinute       float64
+}
+
+func DefaultPricingConfig() *PricingConfig {
+	return &PricingConfig{
+		PricePerUnitOfDistance: 1.5,
+		PricingPerMinute:       0.25,
 	}
 }
