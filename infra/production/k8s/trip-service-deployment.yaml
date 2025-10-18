@@ -16,7 +16,7 @@ spec:
         - name: trip-service
           image: europe-west1-docker.pkg.dev/{{PROJECT_ID}}/microservices_with_go/trip-service
           ports:
-            - containerPort: 8083
+            - containerPort: 9083
           resources:
             requests:
               memory: "64Mi"
@@ -34,7 +34,7 @@ spec:
   selector:
     app: trip-service
   ports:
-    - port: 8083
+    - port: 9083
       name: http
-      targetPort: 8083
+      targetPort: 9083
   type: ClusterIP
