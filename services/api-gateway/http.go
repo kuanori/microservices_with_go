@@ -33,8 +33,6 @@ func handleTripPreview(w http.ResponseWriter, r *http.Request) {
 
 	defer tripService.Close()
 
-	tripService.Client.PreviewTrip()
-
 	resp, err := http.Post("http://trip-service:8083/preview", "application/json", reader)
 	if err != nil {
 		http.Error(w, "failed to call trip service: "+err.Error(), http.StatusInternalServerError)

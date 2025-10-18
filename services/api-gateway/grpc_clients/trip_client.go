@@ -15,7 +15,7 @@ type tripServiceClient struct {
 func NewTripServiceClient() (*tripServiceClient, error) {
 	tripServiceURL := os.Getenv("TRIP_SERVICE_URL")
 	if tripServiceURL == "" {
-		tripServiceURL = "trip-service:8083" // from infra/development/k8s/trip-service-deployment.yaml
+		tripServiceURL = "trip-service:9083" // from infra/development/k8s/trip-service-deployment.yaml
 	}
 
 	conn, err := grpc.NewClient(tripServiceURL)
