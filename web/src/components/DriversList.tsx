@@ -29,7 +29,7 @@ export function DriverList({ trip, onPackageSelect, onCancel }: DriverListProps)
 
             return (
               <div
-                key={fare.id}
+                key={fare.ID}
                 className={cn(
                   "flex items-center justify-between p-4 rounded-lg border transition-all cursor-pointer",
                   "hover:border-primary hover:bg-primary/5",

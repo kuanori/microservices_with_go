@@ -1,6 +1,7 @@
 package domain
 
 import (
+	tripTypes "microservices_with_go/services/trip-service/pkg/types"
 	pb "microservices_with_go/shared/proto/trip"
 	"time"
 
@@ -13,6 +14,7 @@ type RideFareModel struct {
 	PackageSlug       string // ex: van, luxury, sedan
 	TotalPriceInCents float64
 	Expires           time.Time
+	Route             *tripTypes.OsrmApiResponse
 }
 
 func (r *RideFareModel) ToProto() *pb.RideFare {
