@@ -4,11 +4,11 @@ import (
 	"context"
 	"log"
 	"net"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"microservices_with_go/services/trip-service/internal/infrastructure/grpc"
 	"microservices_with_go/services/trip-service/internal/infrastructure/repository"
 	"microservices_with_go/services/trip-service/internal/service"
 	"microservices_with_go/shared/env"
@@ -20,10 +20,9 @@ var (
 	httpAddr = env.GetString("TRIP_HTTP_ADDR", ":8083")
 )
 
-var GrpcAddr = ":9093"
+var GrpcAddr = ":9083"
 
 func main() {
-	mux := http.NewServeMux()
 	inmemRepo := repository.NewInmemRepository()
 	svc := service.NewService(inmemRepo)
 
@@ -43,8 +42,9 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
+	// Starting the gRPC server
 	grpcServer := grpcserver.NewServer()
-	// TODO initialize our grpc handler implementation
+	grpc.NewGRPCHandler(grpcServer, svc)
 
 	log.Printf("Starting gRPC server Trip on port %s", lis.Addr())
 
@@ -61,6 +61,7 @@ func main() {
 	grpcServer.GracefulStop()
 
 	// ======== HTTP Server
+	// mux := http.NewServeMux()
 	// httpHandler := h.HttpHandler{Service: svc}
 
 	// mux.HandleFunc("POST /preview", httpHandler.HandleTripPreview)
