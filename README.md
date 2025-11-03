@@ -14,26 +14,6 @@ minikube dashboard
 ```
 
 ```bash
-kubectl get pods
-```
-
-```bash
-kubectl get services
-```
-
-```bash
-kubectl get all | cat
-```
-
-```bash
-kubectl logs deployment/api-gateway | cat
-```
-
-```bash
-kubectl describe deployment/api-gateway | cat
-```
-
-```bash
 tilt up
 ```
 
@@ -58,3 +38,37 @@ services/test-service/
 │   └── types/           # Shared types and models
 └── README.md            # This file
 ```
+
+###[Kubernetes](https://kubernetes.io/docs/concepts/architecture/)
+```bash
+kubectl get pods
+```
+
+```bash
+kubectl get services
+```
+
+```bash
+kubectl get all | cat
+```
+
+```bash
+kubectl logs deployment/api-gateway | cat
+```
+
+```bash
+kubectl describe deployment/api-gateway | cat
+```
+
+```bash
+kubectl get nodes -o wide
+```
+
+```bash
+kubectl describe pod {POD_NAME} | grep -A 5 "Conditions:"
+```
+
+![alt text](./docs/kubernetes-components.png)
+
+![alt text](./docs/k8s-components.png)
+
