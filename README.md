@@ -14,6 +14,26 @@ minikube dashboard
 ```
 
 ```bash
+kubectl get pods
+```
+
+```bash
+kubectl get services
+```
+
+```bash
+kubectl get all | cat
+```
+
+```bash
+kubectl logs deployment/api-gateway | cat
+```
+
+```bash
+kubectl describe deployment/api-gateway | cat
+```
+
+```bash
 tilt up
 ```
 
