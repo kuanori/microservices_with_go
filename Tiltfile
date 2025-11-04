@@ -82,7 +82,7 @@ k8s_resource('trip-service', resource_deps=['trip-service-compile'], labels="ser
 
 # Uncomment once we have a driver service
 
-driver_compile_cmd = 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/driver-service ./services/driver-service/main.go'
+driver_compile_cmd = 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/driver-service ./services/driver-service'
 if os.name == 'nt':
   driver_compile_cmd = './infra/development/docker/driver-build.bat'
 
