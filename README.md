@@ -49,6 +49,10 @@ kubectl get services
 ```
 
 ```bash
+kubectl get deployments
+```
+
+```bash
 kubectl get all | cat
 ```
 
@@ -66,6 +70,14 @@ kubectl get nodes -o wide
 
 ```bash
 kubectl describe pod {POD_NAME} | grep -A 5 "Conditions:"
+```
+
+```bash
+kubectl apply -f ./infra/development/k8s/driver-service-deployment.yaml
+```
+
+```bash
+kubectl delete -f ./infra/development/k8s/driver-service-deployment.yaml
 ```
 
 ![alt text](./docs/kubernetes-components.png)

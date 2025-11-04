@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: trip-service
+  name: driver-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: trip-service
+      app: driver-service
   template:
     metadata:
       labels:
-        app: trip-service
+        app: driver-service
     spec:
       containers:
-        - name: trip-service
-          image: microservices_with_go/trip-service
+        - name: driver-service
+          image: microservices_with_go/driver-service
           ports:
             - containerPort: 9083
           resources:
@@ -28,12 +28,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: trip-service
+  name: driver-service
 spec:
   selector:
-    app: trip-service
+    app: driver-service
   ports:
-    - port: 9083
-      name: grpc
-      targetPort: 9083
+    - port: 9084
+      name: http
+      targetPort: 9084
   type: ClusterIP
