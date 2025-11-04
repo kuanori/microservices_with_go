@@ -17,7 +17,7 @@ var (
 	httpAddr = env.GetString("DRIVER_HTTP_ADDR", ":9084")
 )
 
-var GrpcAddr = ":9083"
+var GrpcAddr = ":9084"
 
 func main() {
 
