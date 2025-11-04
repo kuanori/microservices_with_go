@@ -16,7 +16,7 @@ spec:
         - name: driver-service
           image: microservices_with_go/driver-service
           ports:
-            - containerPort: 9083
+            - containerPort: 9084
           resources:
             requests:
               memory: "64Mi"
