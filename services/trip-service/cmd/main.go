@@ -12,12 +12,14 @@ import (
 	"microservices_with_go/services/trip-service/internal/infrastructure/repository"
 	"microservices_with_go/services/trip-service/internal/service"
 	"microservices_with_go/shared/env"
+	"microservices_with_go/shared/messaging"
 
 	grpcserver "google.golang.org/grpc"
 )
 
 var (
-	httpAddr = env.GetString("TRIP_HTTP_ADDR", ":8083")
+	httpAddr    = env.GetString("TRIP_HTTP_ADDR", ":8083")
+	rabbitmqURI = env.GetString("RABBITMQ_URI", "amqp://guest:guest@rabbitmq:5672/")
 )
 
 var GrpcAddr = ":9083"
@@ -41,6 +43,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+
+	conn, err := messaging.NewRabbitMQ(rabbitmqURI)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+
+	log.Println("Starting RabbitMQ connection")
 
 	// Starting the gRPC server
 	grpcServer := grpcserver.NewServer()

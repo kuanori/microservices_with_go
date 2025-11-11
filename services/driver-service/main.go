@@ -9,12 +9,14 @@ import (
 	"syscall"
 
 	"microservices_with_go/shared/env"
+	"microservices_with_go/shared/messaging"
 
 	grpcserver "google.golang.org/grpc"
 )
 
 var (
-	httpAddr = env.GetString("DRIVER_HTTP_ADDR", ":9084")
+	httpAddr    = env.GetString("DRIVER_HTTP_ADDR", ":9084")
+	rabbitmqURI = env.GetString("RABBITMQ_URI", "amqp://guest:guest@rabbitmq:5672/")
 )
 
 var GrpcAddr = ":9084"
@@ -36,6 +38,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+
+	conn, err := messaging.NewRabbitMQ(rabbitmqURI)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+
+	log.Println("Starting RabbitMQ connection")
 
 	service := NewService()
 
