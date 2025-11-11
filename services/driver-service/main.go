@@ -39,11 +39,11 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	conn, err := messaging.NewRabbitMQ(rabbitmqURI)
+	rabbitmq, err := messaging.NewRabbitMQ(rabbitmqURI)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer conn.Close()
+	defer rabbitmq.Close()
 
 	log.Println("Starting RabbitMQ connection")
 
