@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"microservices_with_go/services/trip-service/internal/infrastructure/events"
 	"microservices_with_go/services/trip-service/internal/infrastructure/grpc"
 	"microservices_with_go/services/trip-service/internal/infrastructure/repository"
 	"microservices_with_go/services/trip-service/internal/service"
@@ -44,17 +45,19 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	conn, err := messaging.NewRabbitMQ(rabbitmqURI)
+	rabbitmq, err := messaging.NewRabbitMQ(rabbitmqURI)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer conn.Close()
+	defer rabbitmq.Close()
 
 	log.Println("Starting RabbitMQ connection")
 
+	publisher := events.NewTripEventPublisher(rabbitmq)
+
 	// Starting the gRPC server
 	grpcServer := grpcserver.NewServer()
-	grpc.NewGRPCHandler(grpcServer, svc)
+	grpc.NewGRPCHandler(grpcServer, svc, publisher)
 
 	log.Printf("Starting gRPC server Trip on port %s", lis.Addr())
 
