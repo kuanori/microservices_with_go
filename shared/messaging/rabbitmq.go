@@ -78,3 +78,34 @@ func (r *RabbitMQ) Close() {
 		r.Channel.Close()
 	}
 }
+
+type MessageHandler func(context.Context, amqp.Delivery) error
+
+func (r *RabbitMQ) ConsumeMessages(queueName string, handler MessageHandler) error {
+	msgs, err := r.Channel.Consume(
+		queueName, // queue
+		"",        // consumer
+		true,      // auto-ack
+		false,     // exclusive
+		false,     // no-local
+		false,     // no-wait
+		nil,       // args
+	)
+	if err != nil {
+		return err
+	}
+
+	ctx := context.Background()
+
+	go func() {
+		for msg := range msgs {
+			log.Printf("Received a message: %s", msg.Body)
+
+			if err := handler(ctx, msg); err != nil {
+				log.Fatalf("failed to handler the message: %v", err)
+			}
+		}
+	}()
+
+	return nil
+}
