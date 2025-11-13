@@ -472,7 +472,7 @@ func (x *CreateTripResponse) GetTrip() *Trip {
 type Trip struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	SelectedFare  string                 `protobuf:"bytes,2,opt,name=selectedFare,proto3" json:"selectedFare,omitempty"`
+	SelectedFare  *RideFare              `protobuf:"bytes,2,opt,name=selectedFare,proto3" json:"selectedFare,omitempty"`
 	Route         *Route                 `protobuf:"bytes,3,opt,name=route,proto3" json:"route,omitempty"`
 	Status        string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
 	UserID        string                 `protobuf:"bytes,5,opt,name=userID,proto3" json:"userID,omitempty"`
@@ -518,11 +518,11 @@ func (x *Trip) GetId() string {
 	return ""
 }
 
-func (x *Trip) GetSelectedFare() string {
+func (x *Trip) GetSelectedFare() *RideFare {
 	if x != nil {
 		return x.SelectedFare
 	}
-	return ""
+	return nil
 }
 
 func (x *Trip) GetRoute() *Route {
@@ -658,10 +658,10 @@ const file_trip_proto_rawDesc = "" +
 	"\x12CreateTripResponse\x12\x16\n" +
 	"\x06tripID\x18\x01 \x01(\tR\x06tripID\x12\x1e\n" +
 	"\x04trip\x18\x02 \x01(\v2\n" +
-	".trip.TripR\x04trip\"\xb7\x01\n" +
+	".trip.TripR\x04trip\"\xc7\x01\n" +
 	"\x04Trip\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\"\n" +
-	"\fselectedFare\x18\x02 \x01(\tR\fselectedFare\x12!\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x122\n" +
+	"\fselectedFare\x18\x02 \x01(\v2\x0e.trip.RideFareR\fselectedFare\x12!\n" +
 	"\x05route\x18\x03 \x01(\v2\v.trip.RouteR\x05route\x12\x16\n" +
 	"\x06status\x18\x04 \x01(\tR\x06status\x12\x16\n" +
 	"\x06userID\x18\x05 \x01(\tR\x06userID\x12(\n" +
@@ -710,17 +710,18 @@ var file_trip_proto_depIdxs = []int32{
 	4,  // 4: trip.Route.geometry:type_name -> trip.Geometry
 	2,  // 5: trip.Geometry.coordinates:type_name -> trip.Coordinate
 	8,  // 6: trip.CreateTripResponse.trip:type_name -> trip.Trip
-	3,  // 7: trip.Trip.route:type_name -> trip.Route
-	9,  // 8: trip.Trip.driver:type_name -> trip.TripDriver
-	0,  // 9: trip.TripService.PreviewTrip:input_type -> trip.PreviewTripRequest
-	6,  // 10: trip.TripService.CreateTrip:input_type -> trip.CreateTripRequest
-	1,  // 11: trip.TripService.PreviewTrip:output_type -> trip.PreviewTripResponse
-	7,  // 12: trip.TripService.CreateTrip:output_type -> trip.CreateTripResponse
-	11, // [11:13] is the sub-list for method output_type
-	9,  // [9:11] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	5,  // 7: trip.Trip.selectedFare:type_name -> trip.RideFare
+	3,  // 8: trip.Trip.route:type_name -> trip.Route
+	9,  // 9: trip.Trip.driver:type_name -> trip.TripDriver
+	0,  // 10: trip.TripService.PreviewTrip:input_type -> trip.PreviewTripRequest
+	6,  // 11: trip.TripService.CreateTrip:input_type -> trip.CreateTripRequest
+	1,  // 12: trip.TripService.PreviewTrip:output_type -> trip.PreviewTripResponse
+	7,  // 13: trip.TripService.CreateTrip:output_type -> trip.CreateTripResponse
+	12, // [12:14] is the sub-list for method output_type
+	10, // [10:12] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_trip_proto_init() }

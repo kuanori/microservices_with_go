@@ -55,7 +55,7 @@ message CreateTripResponse {
 
 message Trip {
     string id = 1;
-    string selectedFare = 2;
+    RideFare selectedFare = 2;
     Route route = 3;
     string status = 4;
     string userID = 5;
