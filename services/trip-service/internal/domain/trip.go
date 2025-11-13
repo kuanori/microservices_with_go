@@ -3,6 +3,7 @@ package domain
 import (
 	"context"
 	tripTypes "microservices_with_go/services/trip-service/pkg/types"
+	pbd "microservices_with_go/shared/proto/driver"
 	pb "microservices_with_go/shared/proto/trip"
 	"microservices_with_go/shared/types"
 
@@ -33,6 +34,8 @@ type TripRepository interface {
 	SaveRideFare(ctx context.Context, f *RideFareModel) error
 
 	GetRideFareByID(ctx context.Context, id string) (*RideFareModel, error)
+	GetTripByID(ctx context.Context, id string) (*TripModel, error)
+	UpdateTrip(ctx context.Context, tripID string, status string, driver *pbd.Driver) error
 }
 
 type TripService interface {
@@ -46,6 +49,8 @@ type TripService interface {
 		route *tripTypes.OsrmApiResponse) ([]*RideFareModel, error)
 
 	GetAndValidateFare(ctx context.Context, fareID, userID string) (*RideFareModel, error)
+	GetTripByID(ctx context.Context, id string) (*TripModel, error)
+	UpdateTrip(ctx context.Context, tripID string, status string, driver *pbd.Driver) error
 }
 
 // we will return the in-memory reference to the struct,
