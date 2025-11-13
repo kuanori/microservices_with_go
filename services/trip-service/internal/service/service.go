@@ -7,6 +7,7 @@ import (
 	"io"
 	"microservices_with_go/services/trip-service/internal/domain"
 	tripTypes "microservices_with_go/services/trip-service/pkg/types"
+	pbd "microservices_with_go/shared/proto/driver"
 	"microservices_with_go/shared/proto/trip"
 	"microservices_with_go/shared/types"
 	"net/http"
@@ -154,4 +155,12 @@ func getBaseFares() []*domain.RideFareModel {
 			TotalPriceInCents: 1000,
 		},
 	}
+}
+
+func (s *service) GetTripByID(ctx context.Context, id string) (*domain.TripModel, error) {
+	return s.repo.GetTripByID(ctx, id)
+}
+
+func (s *service) UpdateTrip(ctx context.Context, tripID string, status string, driver *pbd.Driver) error {
+	return s.repo.UpdateTrip(ctx, tripID, status, driver)
 }
