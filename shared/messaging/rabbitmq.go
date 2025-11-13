@@ -2,6 +2,7 @@ package messaging
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"microservices_with_go/shared/contracts"
@@ -12,6 +13,11 @@ import (
 type RabbitMQ struct {
 	conn    *amqp.Connection
 	Channel *amqp.Channel
+}
+
+type AmqpMessage struct {
+	OwnerID string `json:"ownerID"`
+	Data    []byte `json:"data"`
 }
 
 const (
@@ -45,8 +51,13 @@ func NewRabbitMQ(uri string) (*RabbitMQ, error) {
 	return rmq, nil
 }
 
-func (r *RabbitMQ) PublishMessage(ctx context.Context, routingKey string, message string) error {
+func (r *RabbitMQ) PublishMessage(ctx context.Context, routingKey string, message contracts.AmqpMessage) error {
 	log.Printf("publishing message with routingKey: %s", routingKey)
+
+	jsonMsg, err := json.Marshal(message)
+	if err != nil {
+		return fmt.Errorf("failed to marshal message: %v", err)
+	}
 
 	return r.Channel.PublishWithContext(ctx,
 		TripExchange, // exchange
@@ -55,7 +66,7 @@ func (r *RabbitMQ) PublishMessage(ctx context.Context, routingKey string, messag
 		false,        // immediate
 		amqp.Publishing{
 			ContentType:  "text/plain",
-			Body:         []byte(message),
+			Body:         jsonMsg,
 			DeliveryMode: amqp.Persistent,
 		})
 }
