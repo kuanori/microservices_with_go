@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"microservices_with_go/services/api-gateway/grpc_clients"
 	"microservices_with_go/shared/contracts"
@@ -34,6 +35,18 @@ func handleRidersWebSocket(w http.ResponseWriter, r *http.Request, rb *messaging
 	if userID == "" {
 		log.Println("No user ID provided")
 		return
+	}
+
+	queues := []string{
+		messaging.NotifyDriverNoDriversFoundQueue,
+	}
+
+	for _, q := range queues {
+		consumer := messaging.NewQueueConsumer(rb, connManager, q)
+
+		if err := consumer.Start(); err != nil {
+			log.Printf("Failed to start consumer for queue: %s: err: %v", q, err)
+		}
 	}
 
 	// Add connection to manager
@@ -131,6 +144,34 @@ func handleDriversWebSocket(w http.ResponseWriter, r *http.Request, rb *messagin
 		if err != nil {
 			log.Printf("Error reading message: %v", err)
 			break
+		}
+
+		type driverMessage struct {
+			Type string          `json:"type"`
+			Data json.RawMessage `json:"data"`
+		}
+
+		var driverMsg driverMessage
+		if err := json.Unmarshal(message, &driverMsg); err != nil {
+			log.Printf("Error unmarshaling driver message: %v", err)
+			continue
+		}
+
+		// Handle the different message type
+		switch driverMsg.Type {
+		case contracts.DriverCmdLocation:
+			// Handle driver location update in the future
+			continue
+		case contracts.DriverCmdTripAccept, contracts.DriverCmdTripDecline:
+			// Forward the message to RabbitMQ
+			if err := rb.PublishMessage(ctx, driverMsg.Type, contracts.AmqpMessage{
+				OwnerID: userID,
+				Data:    driverMsg.Data,
+			}); err != nil {
+				log.Printf("Error publishing message to RabbitMQ: %v", err)
+			}
+		default:
+			log.Printf("Unknown message type: %s", driverMsg.Type)
 		}
 
 		log.Printf("Received message: %s", message)
