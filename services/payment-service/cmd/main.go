@@ -7,6 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"microservices_with_go/services/payment-service/internal/infrastructure/stripe"
+	"microservices_with_go/services/payment-service/internal/service"
 	"microservices_with_go/services/payment-service/pkg/types"
 	"microservices_with_go/shared/env"
 	"microservices_with_go/shared/messaging"
@@ -41,6 +43,11 @@ func main() {
 		log.Fatalf("STRIPE_SECRET_KEY is not set")
 		return
 	}
+
+	paymentProcessor := stripe.NewClient(stripeCfg)
+
+	svc := service.NewPaymentService(paymentProcessor)
+	log.Println(svc)
 
 	// RabbitMQ connection
 	rabbitmq, err := messaging.NewRabbitMQ(rabbitMqURI)
