@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"microservices_with_go/services/payment-service/internal/events"
 	"microservices_with_go/services/payment-service/internal/infrastructure/stripe"
 	"microservices_with_go/services/payment-service/internal/service"
 	"microservices_with_go/services/payment-service/pkg/types"
@@ -57,6 +58,10 @@ func main() {
 	defer rabbitmq.Close()
 
 	log.Println("Starting RabbitMQ connection")
+
+	// new trip consumer
+	tripConsumer := events.NewTripConsumer(rabbitmq, svc)
+	go tripConsumer.Listen()
 
 	// Wait for shutdown signal
 	<-ctx.Done()
