@@ -23,7 +23,8 @@ type AmqpMessage struct {
 }
 
 const (
-	TripExchange = "trip"
+	TripExchange       = "trip"
+	DeadLetterExchange = "dlx"
 )
 
 func NewRabbitMQ(uri string) (*RabbitMQ, error) {
@@ -81,6 +82,11 @@ func (r *RabbitMQ) publish(ctx context.Context, exchange, routingKey string, msg
 }
 
 func (r *RabbitMQ) setupExchangesAndQueues() error {
+
+	// First setup the DLQ exchange and queue
+	if err := r.setupDeadLetterExchange(); err != nil {
+		return err
+	}
 
 	err := r.Channel.ExchangeDeclare(
 		TripExchange, // name
@@ -165,13 +171,19 @@ func (r *RabbitMQ) setupExchangesAndQueues() error {
 }
 
 func (r *RabbitMQ) declareAndBindQueue(queueName string, messageTypes []string, exchange string) error {
+
+	// Add dead letter configuration
+	args := amqp.Table{
+		"x-dead-letter-exchange": DeadLetterExchange,
+	}
+
 	q, err := r.Channel.QueueDeclare(
 		queueName, // name
 		true,      // durable
 		false,     // delete when unused
 		false,     // exclusive
 		false,     // no-wait
-		nil,       // arguments
+		args,      // arguments with DLX config
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -272,6 +284,49 @@ func (r *RabbitMQ) ConsumeMessages(queueName string, handler MessageHandler) err
 			}
 		}
 	}()
+
+	return nil
+}
+
+func (r *RabbitMQ) setupDeadLetterExchange() error {
+	// Declare the dead letter exchange
+	err := r.Channel.ExchangeDeclare(
+		DeadLetterExchange,
+		"topic",
+		true,  // durable
+		false, // auto-deleted
+		false, // internal
+		false, // no-wait
+		nil,   // arguments
+	)
+	if err != nil {
+		return fmt.Errorf("failed to declare dead letter exchange: %v", err)
+	}
+
+	// Declare the dead letter queue
+	q, err := r.Channel.QueueDeclare(
+		DeadLetterQueue,
+		true,  // durable
+		false, // delete when unused
+		false, // exclusive
+		false, // no-wait
+		nil,   // arguments
+	)
+	if err != nil {
+		return fmt.Errorf("failed to declare dead letter queue: %v", err)
+	}
+
+	// Bind the queue to the exchange with a wildcard routing key
+	err = r.Channel.QueueBind(
+		q.Name,
+		"#", // wildcard routing key to catch all messages
+		DeadLetterExchange,
+		false,
+		nil,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to bind dead letter queue: %v", err)
+	}
 
 	return nil
 }

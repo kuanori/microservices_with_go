@@ -38,6 +38,8 @@ func (c *TripConsumer) Listen() error {
 			return err
 		}
 
+		// return fmt.Errorf("simulated failer for testing DLX")
+
 		switch msg.RoutingKey {
 		case contracts.PaymentCmdCreateSession:
 			if err := c.handleTripAccepted(ctx, payload); err != nil {
