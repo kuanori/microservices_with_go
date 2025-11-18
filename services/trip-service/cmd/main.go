@@ -12,6 +12,7 @@ import (
 	"microservices_with_go/services/trip-service/internal/infrastructure/grpc"
 	"microservices_with_go/services/trip-service/internal/infrastructure/repository"
 	"microservices_with_go/services/trip-service/internal/service"
+	"microservices_with_go/shared/db"
 	"microservices_with_go/shared/env"
 	"microservices_with_go/shared/messaging"
 	"microservices_with_go/shared/tracing"
@@ -45,6 +46,15 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	defer sh(ctx)
+
+	mongoClient, err := db.NewMongoClient(ctx, db.NewMongoDefaultConfig())
+	if err != nil {
+		log.Fatalf("failed to init MongoDB, err: %v", err)
+	}
+	defer mongoClient.Disconnect(ctx)
+
+	mondoDb := db.GetDatabase(mongoClient, db.NewMongoDefaultConfig())
+	log.Printf(mondoDb.Name())
 
 	go func() {
 		sigCh := make(chan os.Signal, 1)
