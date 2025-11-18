@@ -80,6 +80,13 @@ kubectl apply -f ./infra/development/k8s/driver-service-deployment.yaml
 kubectl delete -f ./infra/development/k8s/driver-service-deployment.yaml
 ```
 
+```bash
+https://docs.stripe.com/stripe-cli
+```
+```bash
+stripe listen --forward-to localhost:8081/webhook/stripe
+```
+
 ![alt text](./docs/kubernetes-components.png)
 
 ![alt text](./docs/k8s-components.png)
