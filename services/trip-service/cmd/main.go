@@ -40,9 +40,6 @@ func main() {
 		log.Fatalf("Failed to initialize the tracer: %v", err)
 	}
 
-	inmemRepo := repository.NewInmemRepository()
-	svc := service.NewService(inmemRepo)
-
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	defer sh(ctx)
@@ -53,8 +50,11 @@ func main() {
 	}
 	defer mongoClient.Disconnect(ctx)
 
-	mondoDb := db.GetDatabase(mongoClient, db.NewMongoDefaultConfig())
-	log.Printf(mondoDb.Name())
+	mongoDb := db.GetDatabase(mongoClient, db.NewMongoDefaultConfig())
+	log.Printf(mongoDb.Name())
+
+	inmemRepo := repository.NewInmemRepository()
+	svc := service.NewService(inmemRepo)
 
 	go func() {
 		sigCh := make(chan os.Signal, 1)
