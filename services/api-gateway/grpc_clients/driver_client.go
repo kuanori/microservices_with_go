@@ -2,6 +2,7 @@ package grpc_clients
 
 import (
 	pb "microservices_with_go/shared/proto/driver"
+	"microservices_with_go/shared/tracing"
 	"os"
 
 	"google.golang.org/grpc"
@@ -19,7 +20,12 @@ func NewDriverServiceClient() (*driverServiceClient, error) {
 		driverServiceURL = "driver-service:9084"
 	}
 
-	conn, err := grpc.NewClient(driverServiceURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	dialOptions := append(
+		tracing.DialOptionsWithTracing(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+
+	conn, err := grpc.NewClient(driverServiceURL, dialOptions...)
 	if err != nil {
 		return nil, err
 	}

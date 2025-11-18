@@ -64,7 +64,7 @@ func main() {
 	service := NewService()
 
 	// Starting the gRPC server
-	grpcServer := grpcserver.NewServer()
+	grpcServer := grpcserver.NewServer(tracing.WithTracingInterceptors()...)
 	NewGrpcHandler(grpcServer, service)
 
 	log.Printf("Starting gRPC server Driver on port %s", lis.Addr())
