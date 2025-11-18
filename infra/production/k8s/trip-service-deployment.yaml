@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: trip-service
-          image: europe-west1-docker.pkg.dev/{{PROJECT_ID}}/microservices_with_go/trip-service
+          image: europe-west1-docker.pkg.dev/microservices-with-go/microservices_with_go/trip-service
           ports:
             - containerPort: 9083
           resources:
@@ -24,6 +24,28 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "200m"
+          env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb
+                  key: uri
+            - name: RABBITMQ_URI
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-credentials
+                  key: uri
+            - name: OSRM_API
+              valueFrom:
+                secretKeyRef:
+                  name: external-apis
+                  key: osrm
+
+            - name: JAEGER_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  key: JAEGER_ENDPOINT
+                  name: app-config
 
 ---
 apiVersion: v1
@@ -35,6 +57,6 @@ spec:
     app: trip-service
   ports:
     - port: 9083
-      name: http
+      name: grpc
       targetPort: 9083
   type: ClusterIP
