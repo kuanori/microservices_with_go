@@ -2,6 +2,7 @@ package grpc_clients
 
 import (
 	pb "microservices_with_go/shared/proto/trip"
+	"microservices_with_go/shared/tracing"
 	"os"
 
 	"google.golang.org/grpc"
@@ -19,7 +20,12 @@ func NewTripServiceClient() (*tripServiceClient, error) {
 		tripServiceURL = "trip-service:9083" // from infra/development/k8s/trip-service-deployment.yaml
 	}
 
-	conn, err := grpc.NewClient(tripServiceURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	dialOptions := append(
+		tracing.DialOptionsWithTracing(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+
+	conn, err := grpc.NewClient(tripServiceURL, dialOptions...)
 	if err != nil {
 		return nil, err
 	}
