@@ -53,7 +53,8 @@ func main() {
 	mongoDb := db.GetDatabase(mongoClient, db.NewMongoDefaultConfig())
 	log.Printf(mongoDb.Name())
 
-	inmemRepo := repository.NewInmemRepository()
+	// inmemRepo := repository.NewInmemRepository()
+	inmemRepo := repository.NewMongoRepository(mongoDb)
 	svc := service.NewService(inmemRepo)
 
 	go func() {
